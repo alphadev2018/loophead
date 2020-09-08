@@ -42,9 +42,9 @@ class User extends BaseUser
     /**
      * @return BelongsToMany
      */
-    public function likedTracks()
+    public function likedLoops()
     {
-        return $this->morphedByMany(Track::class, 'likeable', 'likes')
+        return $this->morphedByMany(Loop::class, 'likeable', 'likes')
             ->withTimestamps();
     }
 
@@ -79,11 +79,33 @@ class User extends BaseUser
     }
 
     /**
+     * @return MorphToMany
+     */
+    public function uploadedLoops()
+    {
+        return $this->morphToMany(Loop::class, 'artist', 'artist_loop')
+            ->whereNull('soundkit_id')
+            ->withCount('likes')
+            ->withCount('reposts')
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
      * @return MorphMany
      */
     public function albums()
     {
         return $this->morphMany(Album::class, 'artist')
+            ->withCount('reposts')
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function soundkit()
+    {
+        return $this->morphMany(Soundkit::class, 'artist')
             ->withCount('reposts')
             ->orderBy('created_at', 'desc');
     }

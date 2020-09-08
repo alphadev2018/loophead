@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Album;
 use App\Services\Artists\NormalizesArtist;
 use App\Track;
+use App\Soundkit;
+use App\Loop;
 use App\User;
 use App\UserProfile;
 use Common\Core\BaseController;
@@ -88,8 +90,11 @@ class UserProfileController extends BaseController
             case 'uploadedTracks':
                 $pagination = $this->uploadedTracks($user);
                 break;
-            case 'likedTracks':
-                $pagination = $this->likedTracks($user);
+            case 'uploadedLoops':
+                $pagination = $this->uploadedLoops($user);
+                break;
+            case 'likedLoops':
+                $pagination = $this->likedLoops($user);
                 break;
             case 'albums':
                 $pagination = $this->albums($user);
@@ -126,9 +131,24 @@ class UserProfileController extends BaseController
         return $pagination;
     }
 
-    private function likedTracks(User $user)
+    private function uploadedLoops(User $user)
     {
-        $pagination = $user->likedTracks()->with(['genres', 'album'])->withCount('plays')->paginate(20);
+        $pagination = $user->uploadedLoops()
+            ->with('genres')
+            ->withCount('plays')
+            ->paginate(20);
+
+        $loopUsers = collect([$user]);
+        $pagination->transform(function (Loop $loop) use($loopUsers) {
+            $loop->setRelation('artists', $loopUsers);
+            return $loop;
+        });
+        return $pagination;
+    }
+
+    private function likedLoops(User $user)
+    {
+        $pagination = $user->likedLoops()->with(['genres', 'soundkit'])->withCount('plays')->paginate(20);
         $pagination->load('artists');
         return $pagination;
     }
