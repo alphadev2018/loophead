@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PaginateLoopComments
 {
     /**
-     * @param Loop $track
+     * @param Loop $loop
      * @return array
      */
-    public function execute(Loop $track)
+    public function execute(Loop $loop)
     {
-        $pagination = $track->comments()
+        $pagination = $loop->comments()
             ->rootOnly()
             ->with(['user' => function(BelongsTo $builder) {
                 $builder->compact();
@@ -28,7 +28,7 @@ class PaginateLoopComments
         });
 
         $comments = app(LoadChildComments::class)
-            ->execute($track, collect($pagination->items()));
+            ->execute($loop, collect($pagination->items()));
 
         $pagination = $pagination->toArray();
         $pagination['data'] = $comments;

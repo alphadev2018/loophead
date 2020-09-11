@@ -41,7 +41,7 @@ class UserProfileController extends BaseController
     {
         $user = app(User::class)
             ->with('profile', 'links')
-            ->withCount(['followers', 'followedUsers'])
+            ->withCount(['followers', 'followedUsers', 'likedLoops', 'uploadedLoops'])
             ->findOrFail($userId)
             ->setGravatarSize(220);
 

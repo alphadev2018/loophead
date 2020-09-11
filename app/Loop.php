@@ -1,8 +1,8 @@
 <?php namespace App;
 
-// use App\Services\Artists\NormalizesArtist;
-// use App\Traits\DeterminesArtistType;
-// use App\Traits\OrdersByPopularity;
+use App\Services\Artists\NormalizesArtist;
+use App\Traits\DeterminesArtistType;
+use App\Traits\OrdersByPopularity;
 use Common\Comments\Comment;
 use Common\Tags\Tag;
 use Eloquent;
@@ -22,7 +22,7 @@ use Storage;
  * @mixin Eloquent
  */
 class Loop extends Model {
-    // use OrdersByPopularity, NormalizesArtist, DeterminesArtistType;
+    use OrdersByPopularity, NormalizesArtist, DeterminesArtistType;
 
     /**
      * @var array
@@ -47,6 +47,7 @@ class Loop extends Model {
      */
     protected $casts = [
         'id'       => 'integer',
+        'soundkit_id' => 'integer',
         'number'   => 'integer',
         'duration' => 'integer',
         'auto_update' => 'boolean',
@@ -101,16 +102,16 @@ class Loop extends Model {
 
     public function plays()
     {
-        return $this->hasMany(TrackPlay::class);
+        return $this->hasMany(LoopPlay::class);
     }
 
     public function setRelation($relation, $value)
     {
-        // if ($relation === 'artists') {
-        //     $value = $value->map(function($model) {
-        //        return $this->normalizeArtist($model);
-        //     });
-        // }
+        if ($relation === 'artists') {
+            $value = $value->map(function($model) {
+               return $this->normalizeArtist($model);
+            });
+        }
         parent::setRelation($relation, $value);
     }
 

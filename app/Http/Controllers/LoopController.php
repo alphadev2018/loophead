@@ -3,7 +3,7 @@
 use App;
 use App\Http\Requests\ModifyLoops;
 use App\Services\Loops\CrupdateLoop;
-// use App\Services\Tracks\PaginateTrackComments;
+use App\Services\Loops\PaginateLoopComments;
 use App\Loop;
 use Common\Core\BaseController;
 use Common\Database\Paginator;
@@ -42,7 +42,7 @@ class LoopController extends BaseController {
 
 	    $paginator = (new Paginator($this->loop, $this->request->all(), 'pagination.loop_count'));
 	    $paginator->with('soundkit');
-	    // $paginator->withCount('plays');
+	    $paginator->withCount('plays');
 	    // $paginator->setDefaultOrderColumns('spotify_popularity', 'desc');
 
 	    return $this->success(['pagination' => $paginator->paginate()]);
@@ -55,15 +55,13 @@ class LoopController extends BaseController {
 	public function show($id)
 	{
 	    $loop = $this->loop
-            ->with('soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
-            ->withCount('comments', /*'plays',*/ 'reposts', 'likes')
+            ->with('artists', 'soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
+            ->withCount('comments', 'plays', 'reposts', 'likes')
             ->findOrFail($id);
 
-	    $this->authorize('show', $loop);
+	    // $this->authorize('show', $loop);
 
-        // if (app(Settings::class)->get('player.track_comments')) {
-        //     $comments = app(PaginateTrackComments::class)->execute($track);
-        // }
+        $comments = app(PaginateLoopComments::class)->execute($loop);
 
 	    return $this->success([
 	        'loop' => $loop,
@@ -80,7 +78,7 @@ class LoopController extends BaseController {
 	{
 		$loop = $this->loop->findOrFail($id);
 
-		$this->authorize('update', $loop);
+		// $this->authorize('update', $loop);
 
         $loop = app(CrupdateLoop::class)->execute($this->request->all(), $loop, $this->request->get('album'));
 
