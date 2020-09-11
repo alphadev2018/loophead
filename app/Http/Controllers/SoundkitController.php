@@ -47,16 +47,16 @@ class SoundkitController extends BaseController {
      * @param Soundkit $album
      * @return JsonResponse
      */
-    public function show(Soundkit $album)
+    public function show(Soundkit $soundkit)
     {
-        $this->authorize('show', $album);
+        // $this->authorize('show', $album);
 
-        $album = app(ShowSoundkit::class)
-            ->execute($album, $this->request->all());
+        $soundkit = app(ShowSoundkit::class)
+            ->execute($soundkit, $this->request->all());
 
-        dispatch(new IncrementModelViews($album->id, 'album'));
+        // dispatch(new IncrementModelViews($album->id, 'album'));
 
-        return $this->success(['album' => $album]);
+        return $this->success(['soundkit' => $soundkit]);
     }
 
     /**
