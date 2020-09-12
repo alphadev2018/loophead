@@ -105,6 +105,11 @@ class Loop extends Model {
         return $this->hasMany(LoopPlay::class);
     }
 
+    public function downloads()
+    {
+        return $this->hasMany(LoopDownload::class);
+    }
+
     public function setRelation($relation, $value)
     {
         if ($relation === 'artists') {

@@ -81,9 +81,10 @@ class User extends BaseUser
     /**
      * @return MorphToMany
      */
-    public function uploadedLoops()
+    public function uploadedLoops($private = false)
     {
         return $this->morphToMany(Loop::class, 'artist', 'artist_loop')
+            ->where('private', $private)
             ->whereNull('soundkit_id')
             ->withCount('likes')
             ->withCount('reposts')

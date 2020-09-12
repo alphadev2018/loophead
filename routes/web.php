@@ -25,6 +25,9 @@ Route::group(['prefix' => 'secure'], function () {
     // YOUTUBE
     Route::post('youtube/log-client-error', 'YoutubeLogController@store');
 
+    // BROWSE
+    Route::get('browse/{type}', 'BrowseController@index');
+
     // ALBUMS
     Route::get('albums', 'AlbumController@index');
     Route::get('albums/{album}', 'AlbumController@show');

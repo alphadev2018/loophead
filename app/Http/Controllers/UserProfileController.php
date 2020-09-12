@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Album;
 use App\Services\Artists\NormalizesArtist;
 use App\Track;
@@ -133,7 +134,7 @@ class UserProfileController extends BaseController
 
     private function uploadedLoops(User $user)
     {
-        $pagination = $user->uploadedLoops()
+        $pagination = $user->uploadedLoops($user->id === Auth::user()->id)
             ->with('genres')
             ->withCount('plays')
             ->paginate(20);
