@@ -1,11 +1,13 @@
-<?php namespace App\Http\Controllers;
+<?php namespace Common\Auth\Controllers;
 
 use App;
+use App\User;
 use App\Loop;
 use Illuminate\Http\Request;
 use App\Services\Artists\ArtistAlbumsPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Common\Core\BaseController;
+use Common\Auth\BaseUser;
 
 class BrowseController extends BaseController {
 
@@ -43,6 +45,12 @@ class BrowseController extends BaseController {
             case 'top-downloads':
                 $pagination = $this->topDownloads();
                 break;
+            case 'top-makers':
+                $pagination = $this->topMakers();
+                break;
+            case 'featured-makers':
+                $pagination = $this->featuredMakers();
+                break;
         }
 
         return $this->success(['pagination' => $pagination]);
@@ -56,13 +64,25 @@ class BrowseController extends BaseController {
             ->withCount('downloads')
             ->limit(20)
             ->get();
+            
+        return $pagination;
+    }
 
-        // $loopUsers = collect([$user]);
+    private function topMakers()
+    {
+        $pagination = User::whereHas('subscriptions')
+            ->withCount(['followers', 'uploadedLoops'])
+            ->paginate(20);
 
-        // $pagination->transform(function (Loop $loop) use($loopUsers) {
-        //     $loop->setRelation('artists', $loopUsers);
-        //     return $loop;
-        // });
+        return $pagination;
+    }
+
+    private function featuredMakers()
+    {
+        $pagination = User::whereHas('subscriptions')
+            ->withCount(['followers', 'uploadedLoops'])
+            ->paginate(20);
+
         return $pagination;
     }
 }

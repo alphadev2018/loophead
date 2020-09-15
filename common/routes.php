@@ -24,6 +24,9 @@ Route::group(['prefix' => 'secure', 'middleware' => 'web'], function () {
     Route::post('auth/social/extra-credentials', 'Common\Auth\Controllers\SocialAuthController@extraCredentials');
     Route::post('auth/social/{provider}/disconnect', 'Common\Auth\Controllers\SocialAuthController@disconnect');
 
+    // BROWSE
+    Route::get('browse/{type}', 'Common\Auth\Controllers\BrowseController@index');
+
     //USERS
     Route::apiResource('users', 'Common\Auth\Controllers\UserController');
 

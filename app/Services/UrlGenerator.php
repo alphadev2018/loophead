@@ -45,6 +45,15 @@ class UrlGenerator extends BaseUrlGenerator
         return url("track/{$track['id']}/".slugify($track['name'], self::SEPARATOR));
     }
 
+     /**
+     * @param array $loop
+     * @return string
+     */
+    public function loop($loop)
+    {
+        return url("loop/{$loop['id']}/".slugify($loop['name'], self::SEPARATOR));
+    }
+
     /**
      * @param array $genre
      * @return string

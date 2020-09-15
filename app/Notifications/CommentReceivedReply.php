@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Services\UrlGenerator;
-use App\Track;
+use App\Loop;
 use App\User;
 use Common\Comments\Comment;
 use Illuminate\Bus\Queueable;
@@ -27,7 +27,7 @@ class CommentReceivedReply extends Notification
     /**
      * @var array
      */
-    private $track;
+    private $loop;
 
     /**
      * @var UrlGenerator
@@ -42,10 +42,10 @@ class CommentReceivedReply extends Notification
     {
         $this->newComment = $newComment;
         $this->originalComment = $originalComment;
-        $track = app(Track::class)
+        $loop = app(Loop::class)
             ->select(['name', 'id'])
             ->find($newComment['commentable_id']);
-        $this->track = ['name' => $track->name, 'id' => $track->id];
+        $this->loop = ['name' => $loop->name, 'id' => $loop->id];
         $this->urlGenerator = app(UrlGenerator::class);
     }
 
@@ -69,7 +69,7 @@ class CommentReceivedReply extends Notification
         return [
             'image' => $this->originalComment['user']['avatar'],
             'mainAction' => [
-                'action' => $this->relativeUrl($this->urlGenerator->track($this->track)),
+                'action' => $this->relativeUrl($this->urlGenerator->loop($this->loop)),
             ],
             'lines' => [
                 [
@@ -82,7 +82,7 @@ class CommentReceivedReply extends Notification
                     'icon' => 'comment', 'type' => 'primary'
                 ],
                 [
-                    'content' => __('on') . " {$this->track['name']}",
+                    'content' => __('on') . " {$this->loop['name']}",
                     'type' => 'secondary'
                 ],
             ],
