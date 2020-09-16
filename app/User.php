@@ -104,6 +104,15 @@ class User extends BaseUser
     /**
      * @return MorphMany
      */
+    public function message_channels()
+    {
+        return $this->morphToMany(MessageChannel::class, 'message_channelable')
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * @return MorphMany
+     */
     public function soundkit()
     {
         return $this->morphMany(Soundkit::class, 'artist')
