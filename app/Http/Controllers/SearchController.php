@@ -143,6 +143,7 @@ class SearchController extends BaseController
         if ($this->request->get('flatten')) {
             $response['results'] = Arr::flatten($response['results'], 1);
         }
+        $response['genres'] = app(App\Genre::class)->get();
 
         return $this->success($response);
     }

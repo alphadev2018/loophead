@@ -42,6 +42,14 @@ class MessageChannel extends Model
     }
 
     /**
+     * @return HasMany
+     */
+    public function messages()
+    {
+        return $this->hasMany(Messages::class, 'channel_id', 'id');
+    }
+
+    /**
      * @return string
      */
     public function getModelTypeAttribute()

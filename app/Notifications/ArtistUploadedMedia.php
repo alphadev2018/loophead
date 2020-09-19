@@ -84,7 +84,7 @@ class ArtistUploadedMedia extends Notification
     public function getFirstLine()
     {
         $artistName = $this->getArtist()['name'];
-        $type = is_a($this->media, Track::class) ? 'track' : 'album';
+        $type = is_a($this->media, Track::class) ? 'loop' : 'soundkit';
         return __(":artistName uploaded a new $type", ['artistName' => $artistName]);
     }
 

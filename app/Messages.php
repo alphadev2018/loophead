@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\Messages\NormalizesChannel;
 use Eloquent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -18,8 +19,10 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 class Messages extends Model
 {
+    use NormalizesChannel;
+
     protected $guarded = ['id'];
-    protected $appends = ['model_type'];
+    protected $appends = ['model_type', 'created_at_relative'];
 
     protected $casts = [
         'id' => 'integer',
@@ -51,12 +54,10 @@ class Messages extends Model
     }
 
     /**
-     * @return $this
+     * @return string
      */
-    // public function loadContent()
-    // {
-    //     $channelContent = app(LoadChannelContent::class)->execute($this);
-    //     $this->setRelation('content', $channelContent);
-    //     return $this;
-    // }
+    public function getCreatedAtRelativeAttribute()
+    {
+        return $this->created_at ? $this->created_at->diffForHumans() : null;
+    }
 }

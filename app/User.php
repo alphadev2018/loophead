@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Traits\DeterminesArtistType;
+use App\Services\Messages\NormalizesChannel;
 use Common\Auth\BaseUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends BaseUser
 {
-    use Notifiable, DeterminesArtistType;
+    use Notifiable, DeterminesArtistType, NormalizesChannel;
 
     protected $appends = [
         'display_name',
@@ -107,7 +108,7 @@ class User extends BaseUser
     public function message_channels()
     {
         return $this->morphToMany(MessageChannel::class, 'message_channelable')
-            ->orderBy('created_at', 'desc');
+            ->with('messages');
     }
 
     /**
@@ -158,5 +159,15 @@ class User extends BaseUser
     public function getModelTypeAttribute()
     {
         return User::class;
+    }
+
+    public function setRelation($relation, $value)
+    {
+        if ($relation === 'message_channels') {
+            $value = $value->map(function($model) {
+               return $this->normalizeChannel($model);
+            });
+        }
+        parent::setRelation($relation, $value);
     }
 }

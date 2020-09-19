@@ -111,6 +111,11 @@ Route::group(['prefix' => 'secure'], function () {
     Route::post('users/{id}/follow', 'UserFollowersController@follow');
     Route::post('users/{id}/unfollow', 'UserFollowersController@unfollow');
 
+    // MESSAGES
+    Route::get('message/channels', 'MessageController@index');
+    Route::post('message/channels', 'MessageController@create');
+    Route::get('message/channels/find', 'MessageController@find');
+
     // PLAYLISTS
     Route::get('playlists/{id}', 'PlaylistController@show');
     Route::get('playlists', 'PlaylistController@index');
