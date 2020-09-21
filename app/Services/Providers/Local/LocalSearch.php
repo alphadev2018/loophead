@@ -22,8 +22,14 @@ class LocalSearch implements SearchInterface {
      * @param array $modelTypes
      * @return array
      */
-    public function search($q, $limit, $modelTypes) {
-        $q = urldecode($q);
+    public function search($request, $limit, $modelTypes) {
+        $q = urldecode($request->get('query'));
+        $users = $request->get('users');
+        if ($users) {
+            $users = explode(',', $users);
+        }
+        $category_id = $request->get('category_id');
+        
         $limit = $limit ?: 10;
 
         $results = [];
@@ -33,22 +39,43 @@ class LocalSearch implements SearchInterface {
                 $results['artists'] = $this->findArtists($q, $limit);
             } else if ($modelType === Album::class) {
                 // $results['albums'] = Album::with('artist')
-                $results['albums'] = Soundkit::with('artist')
-                    ->where('name' ,'like', $q.'%')
+                $soundkits =  Soundkit::with('artist')
+                    ->where('name' ,'like', '%'.$q.'%');
+                
+                if ($users) {
+                    $soundkits = $soundkits->whereIn('artist_id', $users);
+                }
+                if ($category_id) {
+                    $soundkits = $soundkits->where('category_id', $category_id);
+                }
+
+                $soundkits = $soundkits->where('private', false)
                     ->orWhereHas('tags', function (Builder $builder) use($q) {
                         return $builder->where('name', 'like', "$q%");
                     })
                     ->limit($limit)
                     ->get();
+
+                $results['albums'] = $soundkits;
             } else if ($modelType === Track::class) {
                 // $results['tracks'] = Track::with('album', 'artists')
-                $results['tracks'] = Loop::with('soundkit', 'soundkit.artist', 'artists')
-                    ->where('name', 'like', $q.'%')
+                $loops = Loop::with('soundkit', 'soundkit.artist', 'artists')
+                    ->where('name', 'like', '%'.$q.'%');
+
+                if ($users) {
+                    $loops = $loops->whereIn('user_id', $users);
+                }
+                if ($category_id) {
+                    $loops = $loops->where('category_id', $category_id);
+                }
+
+                $loops = $loops->where('private', false)
                     ->orWhereHas('tags', function (Builder $builder) use($q) {
                         return $builder->where('name', 'like', "$q%");
                     })
                     ->limit($limit)
                     ->get();
+                $results['tracks'] = $loops;
             }
         }
 

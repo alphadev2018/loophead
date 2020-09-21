@@ -98,7 +98,7 @@ class SearchController extends BaseController
         //     $this->authorize('index', $modelType);
         // }
 
-        $results = $contentProvider->search($query, $limit, $modelTypes);
+        $results = $contentProvider->search($this->request, $limit, $modelTypes);
 
         if ( ! is_a($contentProvider, LocalSearch::class) ) {
             $results = $this->saver->save($results);
