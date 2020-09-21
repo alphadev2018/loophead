@@ -86,6 +86,14 @@ class Loop extends Model {
     /**
      * @return BelongsTo
      */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function soundkit()
     {
         return $this->belongsTo(Soundkit::class);

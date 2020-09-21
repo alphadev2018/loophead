@@ -35,6 +35,7 @@ class ModifyLoops extends BaseFormRequest
             'number'             => 'required_with:soundkit_id|min:1',
             // 'album_name'         => 'required_with:album_id|min:1|max:255',
             'duration'           => 'required|integer|min:1',
+            'category_id'        => 'required|integer|min:1',
             'selling_type'       => 'required|string|min:3|max:190',
             // 'artists'            => 'required_without:user_id',
             // 'spotify_popularity' => 'min:1|max:100|nullable',

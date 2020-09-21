@@ -69,6 +69,7 @@ class CrupdateLoop
         if ($soundkit) {
             $inlineData['soundkit_name'] = $soundkit['name'];
             $inlineData['soundkit_id'] = $soundkit['id'];
+            $inlineData['category_id'] = $soundkit['category_id'];
             $inlineData['selling_type'] = $soundkit['selling_type'];
             $inlineData['free'] = $soundkit['free'];
             $inlineData['cost'] = $soundkit['cost'];

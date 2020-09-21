@@ -155,7 +155,7 @@ class LoopController extends BaseController {
                 ->where('user_id', '!=', $user->id);
         }
         
-        $pagination = $pagination->with('genres')
+        $pagination = $pagination->with(['artists', 'genres', 'category'])
             ->withCount('plays')
             ->paginate(5);
 
@@ -163,11 +163,11 @@ class LoopController extends BaseController {
             $item->comments = app(PaginateLoopComments::class)->execute($item);
         }
 
-        $loopUsers = collect([$user]);
-        $pagination->transform(function (Loop $loop) use($loopUsers) {
-            $loop->setRelation('artists', $loopUsers);
-            return $loop;
-        });
+        // $loopUsers = collect([$user]);
+        // $pagination->transform(function (Loop $loop) use($loopUsers) {
+        //     $loop->setRelation('artists', $loopUsers);
+        //     return $loop;
+        // });
 
         return $this->success(['pagination' => $pagination]);
     }

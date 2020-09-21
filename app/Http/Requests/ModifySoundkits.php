@@ -26,6 +26,7 @@ class ModifySoundkits extends BaseFormRequest
             // 'spotify_popularity' => 'integer|min:1|max:100|nullable',
             // 'release_date'       => 'date_format:Y-m-d|nullable',
             'selling_type'       => 'required|string|min:3|max:190',
+            'category_id'        => 'required|integer|min:1',
             'image'              => 'nullable', //TODO url validation does not work on PHP 7.3 and Laravel 5.4,
             'tracks.*.name' => 'required|string|min:3|max:190',
         ];

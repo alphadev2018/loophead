@@ -94,11 +94,11 @@ class SearchController extends BaseController
         $query = $this->request->get('query');
         $contentProvider = $this->provider->get('search', $this->request->get('forceLocal') ? 'local' : null);
 
-        foreach ($modelTypes as $modelType) {
-            $this->authorize('index', $modelType);
-        }
+        // foreach ($modelTypes as $modelType) {
+        //     $this->authorize('index', $modelType);
+        // }
 
-        $results = $contentProvider->search($query, $limit, $modelTypes);
+        $results = $contentProvider->search($this->request, $limit, $modelTypes);
 
         if ( ! is_a($contentProvider, LocalSearch::class) ) {
             $results = $this->saver->save($results);
