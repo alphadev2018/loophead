@@ -84,9 +84,11 @@ class User extends BaseUser
      */
     public function uploadedLoops($private = false)
     {
-        return $this->morphToMany(Loop::class, 'artist', 'artist_loop')
-            ->where('private', $private)
-            ->whereNull('soundkit_id')
+        $loops = $this->morphToMany(Loop::class, 'artist', 'artist_loop');
+        if (!$private) {
+            $loops = $loops->where('private', $private);
+        }
+        return $loops->whereNull('soundkit_id')
             ->withCount('likes')
             ->withCount('reposts')
             ->orderBy('created_at', 'desc');
@@ -143,6 +145,14 @@ class User extends BaseUser
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function limits()
+    {
+        return $this->hasOne(UserLimit::class, 'user_id', 'id');
     }
 
     /**

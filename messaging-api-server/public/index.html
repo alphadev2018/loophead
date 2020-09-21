@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Test Chat</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+		/>
+		<style>
+			body {
+				background: whitesmoke;
+			}
+
+			.chats {
+				display: flex;
+				padding: 2em;
+			}
+
+			.convo {
+				border: 0;
+				width: 350px;
+				height: 500px;
+			}
+
+			#form {
+				padding: 1em;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				width: 500px;
+				color: #fff;
+				border-radius: 0 0 5px 0;
+				box-shadow: 0 3px 20px rgba(0, 0, 0, 0.19),
+					0 4px 6px rgba(0, 0, 0, 0.23);
+			}
+
+			div {
+				white-space: nowrap;
+			}
+
+			.convo-container {
+				display: flex;
+				flex-direction: column;
+				border-radius: 10px;
+				overflow: hidden;
+				margin-right: 2em;
+				box-shadow: 0 3px 20px rgba(0, 0, 0, 0.19),
+					0 4px 6px rgba(0, 0, 0, 0.23);
+				position: relative;
+			}
+
+			.convo-container button {
+				padding: 0.2em 0.5em;
+				background: white;
+				color: tomato;
+				font-weight: bold;
+				-webkit-font-smoothing: antialiased;
+				border: 0;
+				cursor: pointer;
+				position: absolute;
+				top: -12px;
+				right: 0;
+				font-size: 2em;
+			}
+		</style>
+	</head>
+	<body>
+		<form id="form" class="bg-dark">
+			<input
+				type="number"
+				class="form-control mr-3"
+				id="inputm"
+				placeholder="From"
+			/>
+			<div class="mr-3">to</div>
+			<div class="d-flex flex-column mr-3" style="width:300px;">
+				<input
+					type="number"
+					class="form-control mb-2"
+					id="inputt"
+					placeholder="User"
+				/>
+				<input
+					type="number"
+					class="form-control"
+					id="inputg"
+					placeholder="Group"
+				/>
+			</div>
+			<button class="btn btn-success" type="submit">Open</button>
+		</form>
+
+		<div class="chats"></div>
+
+		<script>
+			const chats = document.querySelector('.chats')
+			const form = document.querySelector('#form')
+			const inputm = document.querySelector('#inputm')
+			const inputt = document.querySelector('#inputt')
+			const inputg = document.querySelector('#inputg')
+
+			//u1->g1
+			//u166->u1
+
+			form.addEventListener('submit', e => {
+				e.preventDefault()
+
+				addConvo(inputm.value, inputt.value, inputg.value)
+
+				inputm.value = ''
+				inputt.value = ''
+				inputg.value = ''
+			})
+
+			function addConvo(from_id, to_id, group_id) {
+				const div = document.createElement('div')
+				const button = document.createElement('button')
+				const iframe = document.createElement('iframe')
+				const id = new Date().valueOf()
+
+				iframe.src = `http://${location.host}/convo.html#${JSON.stringify({
+					from_id,
+					to_id,
+					group_id,
+				})}`
+
+				iframe.className = 'convo'
+
+				iframe.id = id
+
+				button.addEventListener('click', e => {
+					chats.removeChild(div)
+				})
+
+				button.innerHTML = '×'
+
+				div.className = 'convo-container'
+
+				div.appendChild(iframe)
+				div.appendChild(button)
+
+				chats.appendChild(div)
+			}
+		</script>
+	</body>
+</html>

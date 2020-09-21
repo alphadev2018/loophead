@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Test Chat</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+		/>
+		<style>
+			body {
+				min-height: 100vh;
+				-webkit-font-smoothing: antialiased;
+			}
+
+			#messageList {
+				overflow: auto;
+				display: flex;
+				flex-direction: column;
+				flex: 1 1 0px !important;
+			}
+
+			.message {
+				padding: 0.5em 1em;
+				margin-bottom: 1em;
+				border-radius: 75px;
+			}
+
+			.message.us {
+				align-self: flex-start;
+				background: #4caf50;
+				color: #fff;
+				border-radius: 75px 75px 75px 0;
+			}
+
+			.message.them {
+				align-self: flex-end;
+				background: #eee;
+				border-radius: 75px 75px 0 75px;
+			}
+
+			#form {
+				width: 100%;
+			}
+
+			#title {
+				position: relative;
+				z-index: 9;
+				box-shadow: 0 10px 5px #fff;
+			}
+		</style>
+	</head>
+	<body class="d-flex flex-column">
+		<h4 id="title" class="p-2 text-bold text-center"></h4>
+		<div id="messageList" class="flex-fill p-2"></div>
+
+		<form id="form" autocomplete="off">
+			<div class="p-4 d-flex bg-dark">
+				<input
+					type="text"
+					class="form-control flex-fill mr-4"
+					id="textInput"
+					placeholder="Type your message here..."
+				/>
+				<button class="btn btn-success" id="sendBtn">Send</button>
+			</div>
+		</form>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+		<script src="/script.js"></script>
+	</body>
+</html>
