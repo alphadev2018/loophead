@@ -2,6 +2,9 @@
 
 namespace Common\Files\Actions;
 
+use Auth;
+use App\User;
+use App\UserLimit;
 use Common\Files\Events\FileEntryCreated;
 use Common\Files\FileEntry;
 use Illuminate\Filesystem\FilesystemAdapter;

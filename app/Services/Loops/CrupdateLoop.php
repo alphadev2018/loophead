@@ -2,6 +2,7 @@
 
 namespace App\Services\Loops;
 
+use Auth;
 use App\Soundkit;
 use App\Artist;
 use App\Genre;
@@ -62,39 +63,48 @@ class CrupdateLoop
 
         $inlineData = Arr::except($data, ['artists', 'tags', 'genres', 'keys', 'instruments', 'album', 'waveData']);
 
+        $user = User::find(Auth::user()->id);
+        $is_admin = $user->hasPermission('admin');
+
         if ($soundkit) {
             $inlineData['soundkit_name'] = $soundkit['name'];
             $inlineData['soundkit_id'] = $soundkit['id'];
             $inlineData['selling_type'] = $soundkit['selling_type'];
             $inlineData['free'] = $soundkit['free'];
             $inlineData['cost'] = $soundkit['cost'];
+            $inlineData['staff-picked'] = $soundkit['staff-picked'];
             $inlineData['private'] = $soundkit['private'];
         }
 
-        $newArtists = collect($this->getArtists($data, $soundkit) ?: []);
+        if (!($initialLoop && $is_admin)) {
 
-        $track->fill($inlineData)->save();
+            $inlineData['user_id'] = $user->id;
 
-        // make sure we're only attaching new artists to avoid too many db queries
-        if ($track->relationLoaded('artists')) {
-            $newArtists = $newArtists->filter(function($newArtist) use ($track) {
-                $table = $newArtist['artist_type'] === Artist::class ? 'artists' : 'users';
-                return !$track->artists()->where("$table.id", $newArtist['id'])->where('artist_type', $newArtist['artist_type'])->first();
-            });
-        }
+            $newArtists = collect($this->getArtists($data, $soundkit) ?: []);
 
-        if ($newArtists->isNotEmpty()) {
-            $pivots = $newArtists->map(function($artist, $index) use($track) {
-                return [
-                    'artist_id' => $artist['id'],
-                    'artist_type' => $artist['artist_type'],
-                    'loop_id' => $track['id'],
-                    'primary' => $index === 0,
-                ];
-            });
+            $track->fill($inlineData)->save();
 
-            DB::table('artist_loop')->where('loop_id', $track->id)->delete();
-            DB::table('artist_loop')->insert($pivots->toArray());
+            // make sure we're only attaching new artists to avoid too many db queries
+            if ($track->relationLoaded('artists')) {
+                $newArtists = $newArtists->filter(function($newArtist) use ($track) {
+                    $table = $newArtist['artist_type'] === Artist::class ? 'artists' : 'users';
+                    return !$track->artists()->where("$table.id", $newArtist['id'])->where('artist_type', $newArtist['artist_type'])->first();
+                });
+            }
+
+            if ($newArtists->isNotEmpty()) {
+                $pivots = $newArtists->map(function($artist, $index) use($track) {
+                    return [
+                        'artist_id' => $artist['id'],
+                        'artist_type' => $artist['artist_type'],
+                        'loop_id' => $track['id'],
+                        'primary' => $index === 0,
+                    ];
+                });
+
+                DB::table('artist_loop')->where('loop_id', $track->id)->delete();
+                DB::table('artist_loop')->insert($pivots->toArray());
+            }
         }
 
         $tags = Arr::get($data, 'tags', []);

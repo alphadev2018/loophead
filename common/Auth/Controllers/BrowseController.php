@@ -51,6 +51,9 @@ class BrowseController extends BaseController {
             case 'featured-makers':
                 $pagination = $this->featuredMakers();
                 break;
+            case 'staff-picked':
+                $pagination = $this->staffPicked();
+                break;
         }
 
         return $this->success(['pagination' => $pagination]);
@@ -58,10 +61,8 @@ class BrowseController extends BaseController {
     
     private function topDownloads()
     {
-        $pagination = Loop::whereNull('user_id')
-            ->with(['artists', 'genres'])
-            ->withCount('plays')
-            ->withCount('downloads')
+        $pagination = Loop::with(['artists', 'genres'])
+            ->withCount(['plays', 'downloads'])
             ->limit(20)
             ->get();
             
@@ -80,9 +81,20 @@ class BrowseController extends BaseController {
     private function featuredMakers()
     {
         $pagination = User::whereHas('subscriptions')
+            ->where('featured', true)
             ->withCount(['followers', 'uploadedLoops'])
             ->paginate(20);
 
+        return $pagination;
+    }
+
+    private function staffPicked()
+    {
+        $pagination = Loop::where('staff-picked', true)
+            ->with('artists', 'soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
+            ->withCount('comments', 'plays', 'reposts', 'likes')
+            ->paginate(20);
+        
         return $pagination;
     }
 }

@@ -61,12 +61,12 @@ Route::group(['prefix' => 'secure'], function () {
 
     // LOOPS
     // Route::get('loops/{track}/comments', 'TrackCommentsController@index');
-    // Route::get('loops/{id}/wave', 'WaveController@show');
+    Route::get('loops/{id}/wave', 'WaveController@show');
     Route::get('loops', 'LoopController@index');
     // Route::get('loops/{id}/download', 'DownloadLocalTrackController@download');
     Route::post('loops', 'LoopController@store');
     Route::put('loops/{id}', 'LoopController@update');
-    // Route::get('loops/top', 'TopTracksController@index');
+    Route::get('loops/myfeed/load-more/{type}', 'LoopController@loadMore');
     Route::get('loops/{id}', 'LoopController@show');
     Route::delete('loops', 'LoopController@destroy');
 
@@ -104,6 +104,7 @@ Route::group(['prefix' => 'secure'], function () {
 
     // USER PROFILE
     Route::get('user-profile/{id}', 'UserProfileController@show');
+    Route::get('user-profile/{user}/limits', 'UserProfileController@limits');
     Route::get('user-profile/{user}/load-more/{type}', 'UserProfileController@loadMore');
     Route::put('user-profile/{user}', 'UserProfileController@update');
 

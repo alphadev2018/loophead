@@ -31,7 +31,9 @@ class PaginateUsers
     {
         $paginator = (new Paginator($this->user, $params))
             ->with(['roles', 'permissions']);
-        $paginator->filterColumns = ['email_verified_at', 'created_at', 'subscribed' => function(Builder $builder) {
+        $paginator->filterColumns = ['email_verified_at', 'created_at', 
+        'featured', 
+        'subscribed' => function(Builder $builder) {
             $builder->whereHas('subscriptions');
         }];
 

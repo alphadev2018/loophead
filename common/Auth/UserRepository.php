@@ -202,6 +202,7 @@ class UserRepository {
             'language'    => isset($params['language']) ? $params['language'] : config('app.locale'),
             //'country'     => isset($params['country']) ? $params['country'] : null,
             'timezone'    => isset($params['timezone']) ? $params['timezone'] : null,
+            'featured' => isset($params['featured']) ? $params['featured'] : false,
             'email_verified_at' => isset($params['email_verified_at']) ? $params['email_verified_at'] : null,
         ];
 

@@ -9,6 +9,7 @@ use App\Track;
 use App\Soundkit;
 use App\Loop;
 use App\User;
+use App\UserLimit;
 use App\UserProfile;
 use Common\Core\BaseController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -83,6 +84,11 @@ class UserProfileController extends BaseController
         $user->setRelation('links', $links);
 
         return $this->success(['user' => $user]);
+    }
+
+    public function limits(User $user)
+    {
+        return $this->success(['limits' => $user->limits]);
     }
 
     public function loadMore(User $user, $contentType)
