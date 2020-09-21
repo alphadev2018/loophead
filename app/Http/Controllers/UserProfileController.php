@@ -143,7 +143,7 @@ class UserProfileController extends BaseController
         $pagination = $user->uploadedLoops($user->id === Auth::user()->id)
             ->with('genres')
             ->withCount('plays')
-            ->paginate(20);
+            ->paginate(5);
 
         $loopUsers = collect([$user]);
         $pagination->transform(function (Loop $loop) use($loopUsers) {
@@ -155,7 +155,11 @@ class UserProfileController extends BaseController
 
     private function likedLoops(User $user)
     {
-        $pagination = $user->likedLoops()->with(['genres', 'soundkit'])->withCount('plays')->paginate(20);
+        $pagination = $user->likedLoops()
+            ->with(['genres', 'soundkit'])
+            ->withCount('plays')
+            ->paginate(5);
+
         $pagination->load('artists');
         return $pagination;
     }

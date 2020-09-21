@@ -15,6 +15,9 @@ Route::group(['prefix' => 'secure'], function () {
     // LANDING
     Route::get('landing/channels', 'LandingPageChannelController@index');
 
+    // CATEGORIES
+    Route::get('category', 'CategoryController@index');
+
     // UPLOAD
     Route::post('music/upload', 'MusicUploadController@upload');
 

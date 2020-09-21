@@ -63,7 +63,9 @@ class BrowseController extends BaseController {
     {
         $pagination = Loop::with(['artists', 'genres'])
             ->withCount(['plays', 'downloads'])
+            // ->where('private', false)
             ->limit(20)
+            ->orderBy('downloads_count', 'desc')
             ->get();
             
         return $pagination;

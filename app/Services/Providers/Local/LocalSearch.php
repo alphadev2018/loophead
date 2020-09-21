@@ -1,8 +1,10 @@
 <?php namespace App\Services\Providers\Local;
 
 use App\Album;
+use App\Soundkit;
 use App\Services\Search\UserSearch;
 use App\Track;
+use App\Loop;
 use App\Artist;
 use App\Services\Search\SearchInterface;
 use App\Traits\DeterminesArtistType;
@@ -30,7 +32,8 @@ class LocalSearch implements SearchInterface {
             if ($modelType === Artist::class) {
                 $results['artists'] = $this->findArtists($q, $limit);
             } else if ($modelType === Album::class) {
-                $results['albums'] = Album::with('artist')
+                // $results['albums'] = Album::with('artist')
+                $results['albums'] = Soundkit::with('artist')
                     ->where('name' ,'like', $q.'%')
                     ->orWhereHas('tags', function (Builder $builder) use($q) {
                         return $builder->where('name', 'like', "$q%");
@@ -38,7 +41,8 @@ class LocalSearch implements SearchInterface {
                     ->limit($limit)
                     ->get();
             } else if ($modelType === Track::class) {
-                $results['tracks'] = Track::with('album', 'artists')
+                // $results['tracks'] = Track::with('album', 'artists')
+                $results['tracks'] = Loop::with('soundkit', 'soundkit.artist', 'artists')
                     ->where('name', 'like', $q.'%')
                     ->orWhereHas('tags', function (Builder $builder) use($q) {
                         return $builder->where('name', 'like', "$q%");
