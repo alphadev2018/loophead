@@ -37,6 +37,7 @@ Route::group(['prefix' => 'secure'], function () {
 
     // SOUNDKITS
     Route::get('soundkits', 'SoundkitController@index');
+    Route::get('soundkits/{id}/download', 'DownloadController@downloadSoundkit');
     Route::get('soundkits/{soundkit}', 'SoundkitController@show');
     Route::post('soundkits', 'SoundkitController@store');
     Route::put('soundkits/{soundkit}', 'SoundkitController@update');
@@ -66,7 +67,7 @@ Route::group(['prefix' => 'secure'], function () {
     // Route::get('loops/{track}/comments', 'TrackCommentsController@index');
     Route::get('loops/{id}/wave', 'WaveController@show');
     Route::get('loops', 'LoopController@index');
-    // Route::get('loops/{id}/download', 'DownloadLocalTrackController@download');
+    Route::get('loops/{id}/download', 'DownloadController@downloadLoop');
     Route::post('loops', 'LoopController@store');
     Route::put('loops/{id}', 'LoopController@update');
     Route::get('loops/myfeed/load-more/{type}', 'LoopController@loadMore');
@@ -169,6 +170,12 @@ Route::get('user/{id}/{name}', '\Common\Auth\Controllers\UserController@show')->
 Route::get('genre/{name}', 'GenreController@show')->middleware('prerenderIfCrawler');
 Route::get('search/{query}', 'SearchController@index')->middleware('prerenderIfCrawler');
 Route::get('search/{query}/{tab}', 'SearchController@index')->middleware('prerenderIfCrawler');
+
+//PAYMENT
+Route::post('/checkout/payment/{product_id}/{product_type}/paypal', [ 'as' => 'checkout.payment.paypal', 'uses' => 'PaymentController@checkout' ]);
+Route::get('/paypal/checkout/{order}/completed', [ 'as' => 'paypal.checkout.completed', 'uses' => 'PaymentController@completed' ]);
+Route::get('/paypal/checkout/{order}/cancelled', [ 'as' => 'paypal.checkout.cancelled', 'uses' => 'PaymentController@cancelled' ]);
+Route::post('/webhook/paypal/{order?}/{env?}', [ 'as' => 'webhook.paypal.ipn', 'uses' => 'PayPalController@webhook', ]);
 
 //CATCH ALL ROUTES AND REDIRECT TO HOME
 Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');

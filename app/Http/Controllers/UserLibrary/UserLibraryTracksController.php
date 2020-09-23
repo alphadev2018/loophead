@@ -61,7 +61,7 @@ class UserLibraryTracksController extends BaseController {
     {
         $this->validate($this->request, [
             'likeables.*.likeable_id' => 'required|int',
-            'likeables.*.likeable_type' => 'required|in:App\Track,App\Album,App\Artist',
+            'likeables.*.likeable_type' => 'required|in:App\Track,App\Loop,App\Album,App\Soundkit,App\Artist',
         ]);
 
         $userId = Auth::id();

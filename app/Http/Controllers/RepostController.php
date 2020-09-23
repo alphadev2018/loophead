@@ -41,7 +41,7 @@ class RepostController extends BaseController
         $userId = Auth::id();
         $repostableType = $this->request->get('repostable_type');
 
-        $table = $repostableType === Album::class ? 'albums' : 'tracks';
+        $table = $repostableType === Soundkit::class ? 'soundkits' : 'loops';
         $this->validate($this->request, [
             'repostable_type' => 'required',
             'repostable_id' => "required|exists:$table,id",
