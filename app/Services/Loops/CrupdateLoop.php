@@ -61,7 +61,7 @@ class CrupdateLoop
             $initialLoop :
             $this->track->newInstance();
 
-        $inlineData = Arr::except($data, ['artists', 'tags', 'genres', 'keys', 'instruments', 'album', 'waveData']);
+        $inlineData = Arr::except($data, ['artists', 'tags', 'genres', 'keys', 'album', 'waveData']);
 
         $user = User::find(Auth::user()->id);
         $is_admin = $user->hasPermission('admin');
@@ -71,11 +71,15 @@ class CrupdateLoop
             $inlineData['soundkit_id'] = $soundkit['id'];
             $inlineData['category_id'] = $soundkit['category_id'];
             $inlineData['selling_type'] = $soundkit['selling_type'];
+            $inlineData['subgenre'] = $soundkit['subgenre'];
             $inlineData['free'] = $soundkit['free'];
             $inlineData['cost'] = $soundkit['cost'];
             $inlineData['staff-picked'] = $soundkit['staff-picked'];
             $inlineData['private'] = $soundkit['private'];
         }
+
+        $keys = Arr::get($data, 'keys', []);
+        $inlineData['keys'] = json_encode($keys);
 
         if (!($initialLoop && $is_admin)) {
 
