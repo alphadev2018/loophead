@@ -61,7 +61,7 @@ class BrowseController extends BaseController {
     
     private function topDownloads()
     {
-        $pagination = Loop::with(['artists', 'genres'])
+        $pagination = Loop::with(['artists', 'soundkit', 'soundkit.artist', 'genres'])
             ->withCount(['plays', 'downloads'])
             // ->where('private', false)
             ->limit(20)
@@ -75,7 +75,8 @@ class BrowseController extends BaseController {
     {
         $pagination = User::whereHas('subscriptions')
             ->withCount(['followers', 'uploadedLoops'])
-            ->paginate(20);
+            ->limit(20)
+            ->get();
 
         return $pagination;
     }

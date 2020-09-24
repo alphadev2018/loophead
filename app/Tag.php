@@ -22,4 +22,20 @@ class Tag extends BaseTag
     {
         return $this->morphedByMany(Album::class, 'taggable');
     }
+
+    /**
+     * @return MorphToMany
+     */
+    public function loops()
+    {
+        return $this->morphedByMany(Loop::class, 'taggable');
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function soundkits()
+    {
+        return $this->morphedByMany(Soundkit::class, 'taggable');
+    }
 }

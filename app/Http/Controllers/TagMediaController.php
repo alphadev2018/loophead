@@ -33,15 +33,20 @@ class TagMediaController extends BaseController
         ];
 
         if ($mediaType === 'tracks') {
-            $response['tracks'] = $tag->tracks()->paginate(15);
+            // $response['tracks'] = $tag->tracks()->paginate(15);
+            $response['tracks'] = $tag->loops()->paginate(15);
         } else if ($mediaType === 'albums') {
             $response['albums'] = $tag
-                ->albums()
+                ->soundkits()
                 ->withCount('plays')
-                ->with(['artist', 'tracks' => function(HasMany $query) {
+                ->with(['artist', 'loops' => function(HasMany $query) {
                     $query->orderBy('number', 'desc')
-                        ->select('tracks.id', 'tracks.local_only', 'album_id', 'name', 'plays', 'image', 'url', 'duration');
+                        ->select('loops.id', 'soundkit_id', 'name', 'plays', 'image', 'url', 'duration');
                 }])
+                // ->with(['artist', 'tracks' => function(HasMany $query) {
+                //     $query->orderBy('number', 'desc')
+                //         ->select('tracks.id', 'tracks.local_only', 'album_id', 'name', 'plays', 'image', 'url', 'duration');
+                // }])
                 ->paginate(15);
         }
 

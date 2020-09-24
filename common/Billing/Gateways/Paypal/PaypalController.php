@@ -52,7 +52,7 @@ class PaypalController extends BaseController
             'approvedCallback', 'canceledCallback', 'loadingPopup', 'buyerTest']
         ]);
     }
-
+    
     /**
      * Create subscription agreement on paypal.
      *
