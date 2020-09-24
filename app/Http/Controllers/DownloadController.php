@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\Loop;
+use App\LoopDownload;
 use App\Soundkit;
 use App\User;
 use App\Order;
@@ -65,6 +66,11 @@ class DownloadController extends Controller
     public function download($id) {
 
         $track = Loop::findOrFail($id);
+        
+        $log = new LoopDownload;
+        $log->user_id = Auth::user()->id;
+        $log->loop_id = $track->id;
+        $log->save();
 
         //$this->authorize('download', $track);
 
