@@ -50,6 +50,9 @@ class RegisterController extends BaseController
         $this->validate($request, [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:5', 'confirmed'],
+            'username' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'country' => ['required', 'string'],
         ]);
 
         $params = $request->all();

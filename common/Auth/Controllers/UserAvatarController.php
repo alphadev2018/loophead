@@ -42,31 +42,45 @@ class UserAvatarController extends BaseController {
      */
     public function store($userId) {
 
-        $user = $this->user->findOrFail($userId);
+        if ($userId === 'temp') {
 
-        $this->authorize('update', $user);
+            $path = $this->request->file('file')
+                ->storePublicly('avatars', ['disk' => 'public']);            
 
-        $this->validate($this->request, [
-            'file' => 'required|image|max:1500',
-        ]);
+            return $this->success([
+                'user' => null,
+                'fileEntry' => ['url' => Storage::disk('public')->url($path)]
+            ]);
+                
 
-        // delete old user avatar
-        $this->storage->delete($user->getRawOriginal('avatar'));
+        } else {
 
-        // store new avatar on public disk
-        $path = $this->request->file('file')
-            ->storePublicly('avatars', ['disk' => 'public']);
+            $user = $this->user->findOrFail($userId);
 
-        // attach avatar to user model
-        $user->avatar = $path;
-        $user->save();
+            $this->authorize('update', $user);
 
-        event(new UserAvatarChanged($user));
+            $this->validate($this->request, [
+                'file' => 'required|image|max:1500',
+            ]);
 
-        return $this->success([
-            'user' => $user,
-            'fileEntry' => ['url' => Storage::disk('public')->url($path)]
-        ]);
+            // delete old user avatar
+            $this->storage->delete($user->getRawOriginal('avatar'));
+
+            // store new avatar on public disk
+            $path = $this->request->file('file')
+                ->storePublicly('avatars', ['disk' => 'public']);
+
+            // attach avatar to user model
+            $user->avatar = $path;
+            $user->save();
+
+            event(new UserAvatarChanged($user));
+
+            return $this->success([
+                'user' => $user,
+                'fileEntry' => ['url' => Storage::disk('public')->url($path)]
+            ]);
+        }
     }
 
     /**
