@@ -98,14 +98,14 @@ class LoopController extends BaseController {
         $loop = app(CrupdateLoop::class)->execute($this->request->all(), null, $this->request->get('album'));
 
         $user = App\User::find(Auth::user()->id);
-        if ($user->limit) {
-            $user->limit->uploads ++;
+        if ($user->limits) {
+            $user->limits->uploads ++;
         } else {
-            $user->limit = new App\UserLimit;
-            $user->limit->user_id = $user->id;
-            $user->limit->uploads = 1;
+            $user->limits = new App\UserLimit;
+            $user->limits->user_id = $user->id;
+            $user->limits->uploads = 1;
         }
-        $user->limit->save();
+        $user->limits->save();
         
         return $this->success(['loop' => $loop]);
     }
@@ -155,8 +155,8 @@ class LoopController extends BaseController {
                 ->where('user_id', '!=', $user->id);
         }
         
-        $pagination = $pagination->with(['artists', 'genres', 'category'])
-            ->withCount('plays')
+        $pagination = $pagination->with(['artists', 'genres', 'category', 'comments'])
+            ->withCount('plays', 'comments')
             ->paginate(5);
 
         foreach ($pagination as $item) {

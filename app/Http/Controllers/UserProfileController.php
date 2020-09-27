@@ -140,7 +140,8 @@ class UserProfileController extends BaseController
 
     private function uploadedLoops(User $user)
     {
-        $pagination = $user->uploadedLoops($user->id === Auth::user()->id)
+        $auth = Auth::user();
+        $pagination = $user->uploadedLoops( $auth === NULL ? false : $user->id === $auth->id)
             ->with('genres')
             ->withCount('plays')
             ->paginate(5);

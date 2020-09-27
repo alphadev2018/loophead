@@ -127,7 +127,10 @@ class UserRepository {
         $profile = $user->profile()->updateOrCreate(['user_id' => $user->id], [
             'description'   => isset($params['about_me']) ? $params['about_me'] : null,
             'city'          => isset($params['city']) ? $params['city'] : null,
-            'country'       => isset($params['country']) ? $params['country'] : null
+            'country'       => isset($params['country']) ? $params['country'] : null,
+            'facebook'      => isset($params['facebook']) ? $params['facebook'] : null,
+            'twitter'       => isset($params['twitter']) ? $params['twitter'] : null,
+            'instagram'     => isset($params['instagram']) ? $params['instagram'] : null,
         ]);
         return $profile;
     }
@@ -199,6 +202,7 @@ class UserRepository {
             'first_name'  => isset($params['first_name']) ? $params['first_name'] : null,
             'last_name'   => isset($params['last_name']) ? $params['last_name'] : null,
             'username'    => isset($params['username']) ? $params['username'] : null,
+            'avatar'      => isset($params['avatar']) ? substr($params['avatar'], 8) : null,
             'language'    => isset($params['language']) ? $params['language'] : config('app.locale'),
             //'country'     => isset($params['country']) ? $params['country'] : null,
             'timezone'    => isset($params['timezone']) ? $params['timezone'] : null,
