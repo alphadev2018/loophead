@@ -155,8 +155,8 @@ class LoopController extends BaseController {
                 ->where('user_id', '!=', $user->id);
         }
         
-        $pagination = $pagination->with(['artists', 'genres', 'category'])
-            ->withCount('plays')
+        $pagination = $pagination->with(['artists', 'genres', 'category', 'comments'])
+            ->withCount('plays', 'comments')
             ->paginate(5);
 
         foreach ($pagination as $item) {

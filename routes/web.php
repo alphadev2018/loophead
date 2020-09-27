@@ -64,7 +64,7 @@ Route::group(['prefix' => 'secure'], function () {
     Route::delete('tracks', 'TrackController@destroy');
 
     // LOOPS
-    // Route::get('loops/{track}/comments', 'TrackCommentsController@index');
+    Route::get('loops/{loop}/comments', 'LoopCommentsController@index');
     Route::get('loops/{id}/wave', 'WaveController@show');
     Route::get('loops', 'LoopController@index');
     Route::get('loops/{id}/download', 'DownloadController@downloadLoop');

@@ -20,7 +20,7 @@ class PaginateLoopComments
             ->with(['user' => function(BelongsTo $builder) {
                 $builder->compact();
             }])
-            ->paginate(25);
+            ->paginate(3);
 
         $pagination->transform(function(Comment $comment) {
             $comment->relative_created_at = $comment->created_at->diffForHumans();
