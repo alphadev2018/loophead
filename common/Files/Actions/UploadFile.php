@@ -13,6 +13,8 @@ use Arr;
 use Image;
 use Intervention\Image\Constraint;
 use Intervention\Image\Exception\NotReadableException;
+use File;
+use FFMpeg;
 use Storage;
 
 class UploadFile
@@ -32,6 +34,23 @@ class UploadFile
         }
 
         $this->storeUpload($disk, $fileEntry, $uploadedFile, $params);
+
+        
+
+        if ($params['diskPrefix'] === 'track_media') {
+
+            File::move( Storage::disk('public')->path("track_media/".$fileEntry->file_name), Storage::disk('local')->path('track_media/'.$fileEntry->file_name) );
+
+            $format = new \FFMpeg\Format\Audio\MP3;
+            $format->setAudioKiloBitrate(5);
+
+            FFMpeg::fromDisk('local')
+                ->open('track_media/'.$fileEntry->file_name)
+                ->export()
+                ->toDisk('public')
+                ->inFormat($format)
+                ->save('track_media/'.$fileEntry->file_name);
+        }
 
         if ($disk !== 'public') {
             event(new FileEntryCreated($fileEntry, $params));

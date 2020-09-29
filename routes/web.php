@@ -180,4 +180,4 @@ Route::get('/paypal/checkout/{order}/cancelled', [ 'as' => 'paypal.checkout.canc
 Route::post('/webhook/paypal/{order?}/{env?}', [ 'as' => 'webhook.paypal.ipn', 'uses' => 'PayPalController@webhook', ]);
 
 //CATCH ALL ROUTES AND REDIRECT TO HOME
-// Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');
+Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');

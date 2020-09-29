@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Storage;
 use App\Loop;
 use App\LoopDownload;
 use App\Soundkit;
