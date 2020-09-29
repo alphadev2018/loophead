@@ -61,7 +61,7 @@ class CrupdateLoop
             $initialLoop :
             $this->track->newInstance();
 
-        $inlineData = Arr::except($data, ['artists', 'tags', 'genres', 'keys', 'album', 'waveData']);
+        $inlineData = Arr::except($data, ['artists', 'tags', 'genres', 'keys', 'album', 'waveData', 'confirm']);
 
         $user = User::find(Auth::user()->id);
         $is_admin = $user->hasPermission('admin');
@@ -110,6 +110,10 @@ class CrupdateLoop
                 DB::table('artist_loop')->where('loop_id', $track->id)->delete();
                 DB::table('artist_loop')->insert($pivots->toArray());
             }
+        }
+
+        if ($is_admin) {
+            $track->fill($inlineData)->save();
         }
 
         $tags = Arr::get($data, 'tags', []);

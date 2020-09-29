@@ -42,10 +42,20 @@ class UserProfileController extends BaseController
     public function show($userId)
     {
         $user = app(User::class)
-            ->with('profile', 'links')
+            ->with('profile', 'links', 'followers', 'followedUsers')
             ->withCount(['followers', 'followedUsers', 'likedLoops', 'uploadedLoops'])
             ->findOrFail($userId)
             ->setGravatarSize(220);
+
+        if ( !$user->profile->public ) {
+            $followers = [];
+            foreach ($user->followers as $follower) {
+                array_push($followers, $follower->id);
+            }
+            if (!array_search(Auth::user()->id, $followers)) {
+                return $this->error('This profile is private. Only follwers can see it');
+            }
+        }
 
         if ( ! $user->getRelation('profile')) {
             $user->setRelation('profile', new UserProfile([

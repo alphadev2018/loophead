@@ -91,6 +91,8 @@ Route::group(['prefix' => 'secure'], function () {
 
     // GENRES
     Route::get('genres', 'GenreController@index');
+    Route::get('subgenres', 'GenreController@subgenres');
+    Route::get('subgenre/{subgenre}', 'GenreController@subgenre');
     Route::post('genres', 'GenreController@store');
     Route::put('genres/{id}', 'GenreController@update');
     Route::delete('genres', 'GenreController@destroy');
@@ -178,4 +180,4 @@ Route::get('/paypal/checkout/{order}/cancelled', [ 'as' => 'paypal.checkout.canc
 Route::post('/webhook/paypal/{order?}/{env?}', [ 'as' => 'webhook.paypal.ipn', 'uses' => 'PayPalController@webhook', ]);
 
 //CATCH ALL ROUTES AND REDIRECT TO HOME
-Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');
+// Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');
