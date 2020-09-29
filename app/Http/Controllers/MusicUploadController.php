@@ -58,7 +58,6 @@ class MusicUploadController extends BaseController
 
         $fileEntry = $this->storePublicFile();
 
-
         return $this->success(['fileEntry' => $fileEntry, 'metadata' => $normalizedMetadata], 201);
     }
 

@@ -63,7 +63,7 @@ class BrowseController extends BaseController {
     {
         $pagination = Loop::with(['artists', 'soundkit', 'soundkit.artist', 'genres'])
             ->withCount(['plays', 'downloads'])
-            // ->where('private', false)
+            ->where('private', false)
             ->limit(20)
             ->orderBy('downloads_count', 'desc')
             ->get();
@@ -95,6 +95,7 @@ class BrowseController extends BaseController {
     {
         $pagination = Loop::where('staff-picked', true)
             ->with('artists', 'soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
+            ->where('private', false)
             ->withCount('comments', 'plays', 'reposts', 'likes')
             ->paginate(20);
         
