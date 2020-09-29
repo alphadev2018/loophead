@@ -156,6 +156,14 @@ class User extends BaseUser
     }
 
     /**
+     * @return HasOne
+     */
+    public function settings()
+    {
+        return $this->hasOne(UserSetting::class, 'user_id', 'id');
+    }
+
+    /**
      * @return HasMany
      */
     public function links()

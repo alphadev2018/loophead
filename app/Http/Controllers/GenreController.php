@@ -4,6 +4,7 @@ use App;
 use App\Genre;
 use App\Services\Artists\NormalizesArtist;
 use App\Track;
+use App\Loop;
 use Cache;
 use Carbon\Carbon;
 use Common\Core\BaseController;
@@ -176,5 +177,32 @@ class GenreController extends BaseController
         $count = $this->genre->destroy($this->request->get('ids'));
 
         return $this->success(['count' => $count]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function subgenres()
+    {
+        $subgenres = Loop::whereNotNull('subgenre')
+            ->where('private', 0)
+            ->selectRaw('subgenre as name, count(*) as count')
+            ->orderBy('count', 'desc')
+            ->groupBy('subgenre')
+            ->paginate(20);
+        
+        return $this->success(['subgenres' => $subgenres]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function subgenre($subgenre) 
+    {
+        $pagination = Loop::where('subgenre', $subgenre)
+            ->where('private', 0)
+            ->paginate(20);
+
+        return $this->success(['pagination' => $pagination]);
     }
 }
