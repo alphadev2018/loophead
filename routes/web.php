@@ -114,6 +114,10 @@ Route::group(['prefix' => 'secure'], function () {
     Route::get('user-profile/{user}/load-more/{type}', 'UserProfileController@loadMore');
     Route::put('user-profile/{user}', 'UserProfileController@update');
 
+    // USER SETTING
+    Route::get('user-setting/{id}', 'UserSettingController@show');
+    Route::put('user-setting/{user}', 'UserSettingController@update');
+
     // USER FOLLOWERS
     Route::post('users/{id}/follow', 'UserFollowersController@follow');
     Route::post('users/{id}/unfollow', 'UserFollowersController@unfollow');

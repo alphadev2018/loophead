@@ -3,8 +3,10 @@
 namespace App\Notifications;
 
 use App\Album;
+use App\Soundkit;
 use App\Services\UrlGenerator;
 use App\Track;
+use App\Loop;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

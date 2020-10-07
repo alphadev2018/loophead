@@ -83,9 +83,16 @@ class LocalSearch implements SearchInterface {
                 $results['albums'] = $soundkits->get();
 
             } else if ($modelType === Track::class) {
-                // $results['tracks'] = Track::with('album', 'artists')
+                
                 $loops = Loop::with('soundkit', 'soundkit.artist', 'artists')
-                    ->where('name', 'like', '%'.$q.'%');
+                    ->where(function ($query) use ($q) {
+                        $query->where('name', 'like', '%'.$q.'%')
+                            ->orWhere(function ($qry) use ($q) {
+                                $qry->whereHas('tags', function($qq) use ($q){
+                                    $qq->where('name', 'like', '%'.$q.'%');
+                                });
+                            });
+                    });
 
                 if ($users) {
                     $loops = $loops->whereIn('user_id', $users);

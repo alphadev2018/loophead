@@ -31,7 +31,8 @@ class UrlGenerator extends BaseUrlGenerator
     public function album($album)
     {
         $albumName = slugify($album['name']);
-        $uri = "album/{$album['id']}/";
+        // $uri = "album/{$album['id']}/";
+        $uri = "soundkit/{$album['id']}/";
         $uri .= $album['artist'] ? slugify($album['artist']['name'], self::SEPARATOR).'/'.$albumName : $albumName;
         return url($uri);
     }
@@ -42,7 +43,8 @@ class UrlGenerator extends BaseUrlGenerator
      */
     public function track($track)
     {
-        return url("track/{$track['id']}/".slugify($track['name'], self::SEPARATOR));
+        // return url("track/{$track['id']}/".slugify($track['name'], self::SEPARATOR));
+        return url("loop/{$track['id']}/".slugify($track['name'], self::SEPARATOR));
     }
 
      /**

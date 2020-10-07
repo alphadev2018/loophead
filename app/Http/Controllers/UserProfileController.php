@@ -47,7 +47,7 @@ class UserProfileController extends BaseController
             ->findOrFail($userId)
             ->setGravatarSize(220);
 
-        if ( !$user->profile->public ) {
+        if ( $user->settings && $user->settings->private && Auth::user()->id != $userId ) {
             $followers = [];
             foreach ($user->followers as $follower) {
                 array_push($followers, $follower->id);
