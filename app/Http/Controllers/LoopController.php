@@ -170,8 +170,7 @@ class LoopController extends BaseController {
         // $pagination->transform(function (Loop $loop) use($loopUsers) {
         //     $loop->setRelation('artists', $loopUsers);
         //     return $loop;
-        // });
-        
+        // });       
 
         return $this->success(['pagination' => $pagination]);
     }
