@@ -114,6 +114,10 @@ Route::group(['prefix' => 'secure'], function () {
     Route::get('user-profile/{user}/load-more/{type}', 'UserProfileController@loadMore');
     Route::put('user-profile/{user}', 'UserProfileController@update');
 
+    // USER SETTING
+    Route::get('user-setting/{id}', 'UserSettingController@show');
+    Route::put('user-setting/{user}', 'UserSettingController@update');
+
     // USER FOLLOWERS
     Route::post('users/{id}/follow', 'UserFollowersController@follow');
     Route::post('users/{id}/unfollow', 'UserFollowersController@unfollow');
@@ -177,7 +181,8 @@ Route::get('search/{query}/{tab}', 'SearchController@index')->middleware('preren
 Route::post('/checkout/payment/{product_id}/{product_type}/paypal', [ 'as' => 'checkout.payment.paypal', 'uses' => 'PaymentController@checkout' ]);
 Route::get('/paypal/checkout/{order}/completed', [ 'as' => 'paypal.checkout.completed', 'uses' => 'PaymentController@completed' ]);
 Route::get('/paypal/checkout/{order}/cancelled', [ 'as' => 'paypal.checkout.cancelled', 'uses' => 'PaymentController@cancelled' ]);
-Route::post('/webhook/paypal/{order?}/{env?}', [ 'as' => 'webhook.paypal.ipn', 'uses' => 'PayPalController@webhook', ]);
+Route::post('/webhook/paypal/{order?}/{env?}', [ 'as' => 'webhook.paypal.ipn', 'uses' => 'PayPalController@webhook' ]);
+Route::get('/download/{type}/{id}', [ 'uses' => 'DownloadController@download']);
 
 //CATCH ALL ROUTES AND REDIRECT TO HOME
 Route::get('{all}', '\Common\Core\Controllers\HomeController@show')->where('all', '.*');

@@ -104,6 +104,8 @@ class UserRepository {
             if ( isset($params['country']) || isset($params['city']) || isset($params['aboutme'])) {
                 $this->createProfile($user, $params);
             }
+
+            $this->createDefaultSettings($user);
         } catch (Exception $e) {
             //delete user if there were any errors creating/assigning
             //purchase codes or roles, so there are no artifacts left
@@ -133,6 +135,23 @@ class UserRepository {
             'instagram'     => isset($params['instagram']) ? $params['instagram'] : null,
         ]);
         return $profile;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return UserSetting
+     */
+    public function createDefaultSettings(User $user)
+    {
+        $settings = $user->settings()->updateOrCreate(['user_id' => $user->id], [
+            'notification'      =>  false,
+            'email_like'        =>  true,
+            'email_comment'     =>  true,
+            'email_follow'      =>  true,
+            'newsletter'        =>  true
+        ]);
+        return $settings;
     }
 
     /**

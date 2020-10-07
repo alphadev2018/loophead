@@ -92,7 +92,7 @@ class PaymentController extends Controller
             // return redirect()->route('order.paypal', encrypt($order_id))->with([
             //     'message' => 'You recent payment is sucessful with reference code ' . $response->getTransactionReference(),
             // ]);
-            return redirect()->back();
+            return redirect()->to('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id);
         }
 
         return redirect()->back()->with([

@@ -61,7 +61,10 @@ class LoopController extends BaseController {
             ->withCount('comments', 'plays', 'reposts', 'likes')
             ->findOrFail($id);
 
-	    // $this->authorize('show', $loop);
+        // $this->authorize('show', $loop);
+        
+        $loop->views ++;
+        $loop->save();
 
         $comments = app(PaginateLoopComments::class)->execute($loop);
 
@@ -167,8 +170,7 @@ class LoopController extends BaseController {
         // $pagination->transform(function (Loop $loop) use($loopUsers) {
         //     $loop->setRelation('artists', $loopUsers);
         //     return $loop;
-        // });
-        
+        // });       
 
         return $this->success(['pagination' => $pagination]);
     }

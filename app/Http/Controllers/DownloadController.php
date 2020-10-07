@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Storage;
+use ZipArchive;
 use App\Loop;
 use App\LoopDownload;
 use App\Soundkit;
@@ -19,6 +20,18 @@ use Common\Settings\Settings;
 
 class DownloadController extends Controller
 {
+    /**
+     * @var FileEntry
+     */
+    private $fileEntry;
+
+    /**
+     * @param FileEntry $fileEntry
+     */
+    public function __construct(FileEntry $fileEntry)
+    {
+        $this->fileEntry = $fileEntry;
+    }
     public function downloadLoop($id) {
         
         $loop = Loop::with('artists')
@@ -32,7 +45,7 @@ class DownloadController extends Controller
                 ->exists()
             || $loop->free
         ) {
-            return redirect()->to('/download');
+            return redirect()->to('/download/loop/'.$loop->id);
         }
 
         return view('download', [
@@ -54,7 +67,7 @@ class DownloadController extends Controller
                 ->exists()
             || $soundkit->free
         ) {
-            return redirect()->to('/download');
+            return redirect()->to('/download/soundkit/'.$soundkit->id);
         }
         
         return view('download', [
@@ -64,46 +77,35 @@ class DownloadController extends Controller
     }
 
 
-    public function download($id) {
+    public function download($type, $id) {
 
-        $track = Loop::findOrFail($id);
-        
-        $log = new LoopDownload;
-        $log->user_id = Auth::user()->id;
-        $log->loop_id = $track->id;
-        $log->save();
+        $loops = [];
+        $product = null;
 
-        //$this->authorize('download', $track);
-
-        if ( ! $track->url) {
-            abort(404);
-        }
-
-        preg_match('/.+?\/storage\/track_media\/(.+?\.[a-z0-9]+)/', $track->url, $matches);
-
-        // track is local
-        if (isset($matches[1])) {
-            $entry = $this->fileEntry->where('file_name', $matches[1])->firstOrFail();
-
-            $ext = pathinfo($track->url, PATHINFO_EXTENSION);
-            $trackName = str_replace('%', '', Str::ascii($track->name)).".$ext";
-            $entry->name = $trackName;
-
-            return app(FileResponseFactory::class)->create($entry, 'attachment');
-
-        // track is remote
+        if ($type == 'soundkit') {
+            $loops = Loop::where('soundkit_id', $id)->get();
+            $product = Soundkit::findOrFail($id);
         } else {
-            $response = response()->stream(function() use($track) {
-                echo file_get_contents($track->url);
-            });
-            $disposition = $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                "$track->name.mp3",
-                str_replace('%', '', Str::ascii("$track->name.mp3"))
-            );
-            $response->headers->set('Content-Disposition', $disposition);
-            return $response;
+            $loops = [ Loop::findOrFail($id) ];
+            $product = Loop::findOrFail($id);
         }
 
+        $zip = new ZipArchive;
+        $zipFileName = $product->name.'_'.Str::uuid().'.zip';
+        $zipPath = Storage::disk('local')->path('tmp') . '/' . $zipFileName;
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($loops as $loop) {
+                $matches = explode('/', $loop->url);
+                if (!$matches[2]) continue;
+
+                $entry = $this->fileEntry->where('file_name', $matches[2])->firstOrFail();
+                $path = Storage::disk('local')->path('track_media');
+                $zip->addFile($path.'/'.$matches[2], $entry->name);
+            }
+        }
+        $zip->close();
+        
+        return response()->download($zipPath, "Loophead_".$product->name.".zip")->deleteFileAfterSend(true);
     }
 }

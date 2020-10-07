@@ -97,7 +97,7 @@ class BrowseController extends BaseController {
             ->with('artists', 'soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
             ->where('private', false)
             ->withCount('comments', 'plays', 'reposts', 'likes')
-            ->paginate(20);
+            ->get();
         
         return $pagination;
     }
