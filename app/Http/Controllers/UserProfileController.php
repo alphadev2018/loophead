@@ -98,7 +98,14 @@ class UserProfileController extends BaseController
 
     public function limits(User $user)
     {
-        return $this->success(['limits' => $user->limits]);
+        return $this->success([
+            'limits' => $user->limits ? $user->limits : [
+                'dm' => 0,
+                'uploads' => 0,
+                'sell_soundkit' => 0,
+                'sell_loop' => 0
+            ]
+        ]);
     }
 
     public function loadMore(User $user, $contentType)
