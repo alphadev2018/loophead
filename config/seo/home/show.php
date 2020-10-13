@@ -7,15 +7,15 @@ return [
     ],
     [
         'property' => 'og:title',
-        'content' => 'BeMusic - Listen to music for free.',
+        'content' => 'Loophead.net',
     ],
     [
         'property' => 'og:description',
-        'content' => 'Find and listen to millions of songs, albums and artists, all completely free on BeMusic.',
+        'content' => 'Discover exclusive sound loops here',
     ],
     [
         'property' => 'keywords',
-        'content' => 'music, online, listen, streaming, play, digital, album, artist, playlist'
+        'content' => 'loop, music, soundkit, online, listen, streaming'
     ],
     [
         'property' => 'og:type',

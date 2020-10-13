@@ -93,7 +93,7 @@ class BrowseController extends BaseController {
 
     private function staffPicked()
     {
-        $pagination = Loop::where('staff-picked', true)
+        $pagination = Loop::where('staff_picked', true)
             ->with('artists', 'soundkit.artist', 'soundkit.loops.artists', 'tags', 'genres')
             ->where('private', false)
             ->withCount('comments', 'plays', 'reposts', 'likes')

@@ -74,7 +74,7 @@ class CrupdateLoop
             $inlineData['subgenre'] = $soundkit['subgenre'];
             $inlineData['free'] = $soundkit['free'];
             $inlineData['cost'] = $soundkit['cost'];
-            $inlineData['staff-picked'] = $soundkit['staff-picked'];
+            $inlineData['staff_picked'] = $soundkit['staff_picked'];
             $inlineData['private'] = $soundkit['private'];
         }
 
