@@ -49,7 +49,7 @@ class LocalSearch implements SearchInterface {
 
             } else if ($modelType === Album::class) {
                 // $results['albums'] = Album::with('artist')
-                $soundkits =  Soundkit::with('artist')
+                $soundkits =  Soundkit::with('artist', 'genres')
                     ->where('name' ,'like', '%'.$q.'%');
                 
                 if ($users) {
@@ -84,7 +84,7 @@ class LocalSearch implements SearchInterface {
 
             } else if ($modelType === Track::class) {
                 
-                $loops = Loop::with('soundkit', 'soundkit.artist', 'artists')
+                $loops = Loop::with('soundkit', 'soundkit.artist', 'artists', 'genres')
                     ->where(function ($query) use ($q) {
                         $query->where('name', 'like', '%'.$q.'%')
                             ->orWhere(function ($qry) use ($q) {

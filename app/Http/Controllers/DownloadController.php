@@ -102,10 +102,19 @@ class DownloadController extends Controller
                 $entry = $this->fileEntry->where('file_name', $matches[2])->firstOrFail();
                 $path = Storage::disk('local')->path('track_media');
                 $zip->addFile($path.'/'.$matches[2], $entry->name);
+
+                if ($loop->stem) {
+                    $stem_name = explode('/', $loop->stem);
+                    if (!$stem_name[2]) continue;
+
+                    $stem_path = Storage::disk('public')->path('track_stems');
+                    $stem_entry = $this->fileEntry->where('file_name', $stem_name[2])->firstOrFail();
+                    $zip->addFile($stem_path.'/'.$stem_name[2], $stem_entry->name);
+                }
             }
         }
         $zip->close();
         
-        return response()->download($zipPath, "Loophead_".$product->name.".zip")->deleteFileAfterSend(true);
+        return response()->download($zipPath, "Loophead_".$product->name.".zip", ['location' => '/ttt'])->deleteFileAfterSend(true);
     }
 }
