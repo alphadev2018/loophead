@@ -115,7 +115,7 @@ class Loop extends Model {
 
     public function downloads()
     {
-        return $this->hasMany(LoopDownload::class);
+        return $this->morphMany(Download::class, 'product');
     }
 
     public function setRelation($relation, $value)

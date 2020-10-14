@@ -11,6 +11,7 @@ use App\Soundkit;
 use App\User;
 use App\Order;
 use App\Http\Controllers\Controller;
+use App\Events\DownloadVerified;
 use Common\Files\FileEntry;
 use Common\Files\Response\FileResponseFactory;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class DownloadController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->where('status', 1)
                 ->exists()
-            || $loop->free
+            || $loop->free || $loop->user_id === Auth::user()->id
         ) {
             return redirect()->to('/download/loop/'.$loop->id);
         }
@@ -65,7 +66,7 @@ class DownloadController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->where('status', 1)
                 ->exists()
-            || $soundkit->free
+            || $soundkit->free || $soundkit->artist_id === Auth::user()->id
         ) {
             return redirect()->to('/download/soundkit/'.$soundkit->id);
         }
@@ -84,11 +85,25 @@ class DownloadController extends Controller
 
         if ($type == 'soundkit') {
             $loops = Loop::where('soundkit_id', $id)->get();
-            $product = Soundkit::findOrFail($id);
+            $product = Soundkit::with('artist')->findOrFail($id);
+            $product->user_id = $product->artist_id;
         } else {
             $loops = [ Loop::findOrFail($id) ];
             $product = Loop::findOrFail($id);
         }
+
+        if ( 
+            !Order::where('product_id', $product->id)
+                ->where('product_type', $product->model_type)
+                ->where('user_id', Auth::user()->id)
+                ->where('status', 1)
+                ->exists()
+            && !$product->free && $product->user_id != Auth::user()->id
+        ) {
+            return redirect()->to('/');
+        }
+
+        event(new DownloadVerified(Auth::user(), $product));
 
         $zip = new ZipArchive;
         $zipFileName = $product->name.'_'.Str::uuid().'.zip';
