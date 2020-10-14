@@ -11,7 +11,6 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 use App\User;
-use App\Order;
 
 class DownloadVerified
 {
@@ -23,19 +22,19 @@ class DownloadVerified
     public $user;
 
     /**
-     * @var Order
+     * @var Product
      */
-    public $order;
+    public $product;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, Order $order)
+    public function __construct(User $user, $product)
     {
         $this->user = $user;
-        $this->order = $order;
+        $this->product = $product;
     }
 
     /**

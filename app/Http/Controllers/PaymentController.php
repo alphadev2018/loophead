@@ -13,8 +13,6 @@ use App\Soundkit;
 use Common\Billing\Gateways\Paypal\PaypalController;
 use Illuminate\Http\Request;
 
-use App\Events\DownloadVerified;
-
 /**
  * Class PaymentController
  * @package App\Http\Controllers
@@ -91,24 +89,19 @@ class PaymentController extends Controller
             $order->update([
                 // 'transaction_id' => $response->getTransactionReference(),
                 'status' => Order::PAYMENT_COMPLETED,
-            ]);
+            ]);            
 
-            event(new DownloadVerified($user, $order));
-
-            // Mail::send('emails.receipt', [
-            //     'order'=> $order, 
-            //     'order_date' => $order->updated_at, 
-            //     'user_name' => $user->first_name.' '.$user->last_name,
-            //     'user_email' => $user->email, 
-            //     'download_url' => url('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id)
-            // ], function ($mail) use ($user) { 
-            //     $mail->subject('Purchase Receipt')
-            //         ->from('noreply@loophead.net', 'Loophead.net')
-            //         ->to($user->email); 
-            // });
-
-
-            
+            Mail::send('emails.receipt', [
+                'order'=> $order, 
+                'user_name' => $user->first_name.' '.$user->last_name,
+                'user_email' => $user->email, 
+                'download_url' => url('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id)
+            ], function ($mail) use ($user) { 
+                $mail->subject('Purchase Receipt')
+                    ->from('noreply@loophead.net', 'Loophead.net')
+                    ->to($user->email); 
+            });
+                        
             return redirect()->to('/');
         }
 

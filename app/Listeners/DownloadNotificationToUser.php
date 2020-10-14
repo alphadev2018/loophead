@@ -6,10 +6,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 use App\Events\DownloadVerified;
+use App\Notifications\ProductDownload;
 
 use Mail;
 use App\User;
 use App\Order;
+use App\Download;
 
 class DownloadNotificationToUser
 {
@@ -31,26 +33,33 @@ class DownloadNotificationToUser
      */
     public function handle(DownloadVerified $event)
     {
-        $order = $event->order;
+        $product = $event->product;
         $user = $event->user;
 
-        // Mail::send('emails.receipt', [
-        //     'order'=> $order, 
-        //     'user_name' => $user->first_name.' '.$user->last_name,
-        //     'user_email' => $user->email, 
-        //     'download_url' => url('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id)
-        // ], function ($mail) use ($user) { 
-        //     $mail->subject('Purchase Receipt')
-        //         ->from('noreply@loophead.net', 'Loophead.net')
-        //         ->to($user->email); 
-        // });
-
-        if ($order->product_type === 'App\Loop') {
-            $author = User::find($order->product->user_id);
+        if ($product->model_type === 'App\Loop') {
+            $author = User::find($product->user_id);
         } else {
-            $author = User::find($order->product->artist_id);
+            $author = User::find($product->artist_id);
         }
 
+        if ($user->id === $author->id)
+            return;
+
+        $log = Download::create([
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'product_type' => $product->model_type
+        ]);
+        $log->save();
+
+        $logs = Download::where('user_id', $user->id)
+            ->where('product_id', $product->id)
+            ->where('product_type', $product->type)
+            ->count();
+
+        if ($logs > 1)
+            return;
+        
         if (!$author->settings || !$author->settings->notification) {
 
             Mail::send('welcome', [
@@ -59,9 +68,9 @@ class DownloadNotificationToUser
                     ->from('noreply@loophead.net', 'Loophead.net')
                     ->to($author->email); 
             });
-
-            
             
         }
+
+        $author->notify(new ProductDownload($product, $user));
     }
 }
