@@ -90,6 +90,17 @@ class DownloadController extends Controller
             $product = Loop::findOrFail($id);
         }
 
+        if ( 
+            !Order::where('product_id', $product->id)
+                ->where('product_type', $product->model_type)
+                ->where('user_id', Auth::user()->id)
+                ->where('status', 1)
+                ->exists()
+            && !$product->free
+        ) {
+            return redirect()->to('/');
+        }
+
         $zip = new ZipArchive;
         $zipFileName = $product->name.'_'.Str::uuid().'.zip';
         $zipPath = Storage::disk('local')->path('tmp') . '/' . $zipFileName;

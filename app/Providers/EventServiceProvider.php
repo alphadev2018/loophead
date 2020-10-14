@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Listeners\DeleteModelsRelatedToUser;
 use App\Listeners\GenerateProfileHeaderColors;
 use App\Listeners\UpdateChannelSeoFields;
+use App\Listeners\DownloadNotificationToUser;
+use App\Events\DownloadVerified;
 use Common\Admin\Appearance\Events\AppearanceSettingSaved;
 use Common\Auth\Events\UserAvatarChanged;
 use Common\Auth\Events\UsersDeleted;
@@ -18,6 +20,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        DownloadVerified::class => [
+            DownloadNotificationToUser::class,
+        ],
         AppearanceSettingSaved::class => [
             UpdateChannelSeoFields::class,
         ],

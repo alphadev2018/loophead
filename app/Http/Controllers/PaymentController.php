@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Str;
+use Mail;
 use App\Order;
 use App\PayPal;
 use App\Loop;
@@ -11,6 +12,8 @@ use App\Soundkit;
 
 use Common\Billing\Gateways\Paypal\PaypalController;
 use Illuminate\Http\Request;
+
+use App\Events\DownloadVerified;
 
 /**
  * Class PaymentController
@@ -65,7 +68,8 @@ class PaymentController extends Controller
      */
     public function completed($order_id, Request $request)
     {
-        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+        $order = Order::with('product')->findOrFail($order_id);
 
         $payerId = $request->get('PayerID');
         $paymentId = $request->get('paymentId');
@@ -89,10 +93,23 @@ class PaymentController extends Controller
                 'status' => Order::PAYMENT_COMPLETED,
             ]);
 
-            // return redirect()->route('order.paypal', encrypt($order_id))->with([
-            //     'message' => 'You recent payment is sucessful with reference code ' . $response->getTransactionReference(),
-            // ]);
-            return redirect()->to('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id);
+            event(new DownloadVerified($user, $order));
+
+            // Mail::send('emails.receipt', [
+            //     'order'=> $order, 
+            //     'order_date' => $order->updated_at, 
+            //     'user_name' => $user->first_name.' '.$user->last_name,
+            //     'user_email' => $user->email, 
+            //     'download_url' => url('/download/'.($order->product_type == 'App\Loop' ? 'loop':'soundkit').'/'.$order->product_id)
+            // ], function ($mail) use ($user) { 
+            //     $mail->subject('Purchase Receipt')
+            //         ->from('noreply@loophead.net', 'Loophead.net')
+            //         ->to($user->email); 
+            // });
+
+
+            
+            return redirect()->to('/');
         }
 
         return redirect()->back()->with([
@@ -107,7 +124,7 @@ class PaymentController extends Controller
     {
         $order = Order::findOrFail($order_id);
 
-        return redirect()->route('order.paypal', encrypt($order_id))->with([
+        return redirect()->back()->with([
             'message' => 'You have cancelled your recent PayPal payment !',
         ]);
     }
